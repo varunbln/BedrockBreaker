@@ -1,0 +1,27 @@
+name: BedrockBreaker
+main: Heisenburger69\BedrockBreaker\Main
+version: 0.6.9
+api: 3.0.0
+author: Heisenburger69
+description: Simple Plugin that allows bedrock to be broken
+
+commands:
+ bedrockpick:
+  description: "Give Bedrock Breaker Pickaxe"
+  usage: "/bedrockpick <player>"
+  permission: bedrockpick.command
+
+permissions:
+ bedrock:
+  default: op
+  description: "Allow usage of /bedrockpick"
+  children:
+   bedrock.pick:
+    default: op
+    description: "Allows the use of /bedrockpick"
+   bedrock.break:
+    default: false
+    description: "Allows breaking of Bedrock without the Bedrock Pickaxe"
+   bedrock.usepick:
+    default: op
+    description: "Allows usage of the Bedrock Pickaxe to break Bedrock"
