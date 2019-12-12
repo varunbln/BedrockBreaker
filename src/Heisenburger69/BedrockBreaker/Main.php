@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Heisenburger69\BedrockBreaker;
 
+use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
@@ -21,7 +24,7 @@ class Main extends PluginBase implements Listener {
     public $config;
 
 	public function onEnable() : void{
-        BlockFactory::registerBlock(new BurgerBedrock(), true);
+        BlockFactory::registerBlock(new BurgerBedrock($this), true);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->config = new Config($this->getDataFolder()."config.yml", Config::YAML, ["Break Time" => 3, "BedrockPick Lore" => "This Pickaxe can break Bedrock", "BedrockPick Name" => "Bedrock Breaker"]);
     }
@@ -29,16 +32,18 @@ class Main extends PluginBase implements Listener {
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
 		switch($command->getName()){
 			case "bedrockpick":
-			    if(isset($args[0])) {
-			        $player = $this->getServer()->getPlayer($args[0]);
-			        if($player === null) {
-			            $sender->sendMessage(C::RED . "Player not online!");
-			            return false;
+			    if($sender->hasPermission("bedrock.givepick")) {
+                    if (isset($args[0])) {
+                        $player = $this->getServer()->getPlayer($args[0]);
+                        if ($player === null) {
+                            $sender->sendMessage(C::RED . "Player not online!");
+                            return false;
+                        }
+                        $this->giveBedrockPick($player);
+                        return true;
                     }
-			        $this->giveBedrockPick($player);
-			        return true;
                 }
-				return true;
+                    return true;
 			default:
 				return false;
 		}
@@ -54,5 +59,26 @@ class Main extends PluginBase implements Listener {
         $pick->setLore($lore);
         $pick->setNamedTagEntry(new StringTag("bedrockpick", "reeee"));
         $player->getInventory()->addItem($pick);
+    }
+
+    public function onBreak(PlayerInteractEvent $event) {
+	    if($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+            $player = $event->getPlayer();
+            $item = $event->getItem();
+            $block = $event->getBlock();
+            if ($block->getId() === Block::BEDROCK) {
+                if ($player->hasPermission("bedrock.break")) {
+                    $time = (int)$this->config->get("Break Time") * 20;
+                    $this->getScheduler()->scheduleDelayedTask(new BreakTask($this, $block), $time);
+                    return;
+                }
+                $nbt = $item->getNamedTagEntry("bedrockpick");
+                if ($nbt !== null && $player->hasPermission("bedrock.usepick")) {
+                    $time = (int)$this->config->get("Break Time") * 20;
+                    $this->getScheduler()->scheduleDelayedTask(new BreakTask($this, $block), $time);
+                    return;
+                }
+            }
+        }
     }
 }
