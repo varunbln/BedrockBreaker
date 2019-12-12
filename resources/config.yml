@@ -1,0 +1,15 @@
+---
+#Amount of Time Needed to break bedrock-
+Break Time: 3
+
+#Description of the Pickaxe used to break bedrock-
+BedrockPick Lore: This Pickaxe can break Bedrock
+
+#Name of the Pickaxe used to break bedrock-
+BedrockPick Name: Bedrock Breaker
+
+Worlds:
+    world
+    world1
+    world2
+...

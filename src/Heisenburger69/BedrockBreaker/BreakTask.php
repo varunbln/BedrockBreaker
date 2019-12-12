@@ -15,16 +15,19 @@ class BreakTask extends Task
      * @var Main
      */
     private $plugin;
+    private $name;
 
     /**
      * BreakTask constructor.
      * @param Main $plugin
      * @param $block
+     * @param $name
      */
-    public function __construct(\Heisenburger69\BedrockBreaker\Main $plugin, $block)
+    public function __construct(\Heisenburger69\BedrockBreaker\Main $plugin, $block, $name)
     {
         $this->plugin = $plugin;
         $this->block = $block;
+        $this->name = $name;
     }
 
     /**
@@ -45,5 +48,6 @@ class BreakTask extends Task
         $blevel->setBlock($loc, Block::get(Block::AIR));
         $blevel->addParticle(new ItemBreakParticle($loc, Item::get(Item::BEDROCK)));
         $blevel->dropItem($loc, Item::get(Item::BEDROCK));
+        unset($this->name, $this->plugin->breaking);
     }
 }
