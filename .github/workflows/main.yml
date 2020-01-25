@@ -9,6 +9,11 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: ${{ github.ref }}
+    - name: Create Vendor Directory
+      run: |
+        echo Making directory...
+        mkdir vendor
+        echo Directory made.
     - name: Run PHPStan
       uses: nxtlvlsoftware/pmmp-phpstan-action@3
       with:
