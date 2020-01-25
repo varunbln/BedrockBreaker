@@ -3,9 +3,6 @@ parameters:
 
     checkMissingIterableValueType: false
 
-    ignoreErrors:
-        - 
-
     paths:
         - /source/src
     autoload_files:
